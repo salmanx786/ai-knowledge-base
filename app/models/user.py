@@ -21,6 +21,10 @@ class User(ORMBase):
         String(255),
         nullable=True,
     )
+    hashed_password: Mapped[str] = mapped_column(
+        String(255),
+        nullable=False,
+    )
     is_active: Mapped[bool] = mapped_column(
         Boolean,
         server_default=true(),

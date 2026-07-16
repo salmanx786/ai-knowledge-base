@@ -1,15 +1,17 @@
 from typing import TYPE_CHECKING
 
-from sqlalchemy import BigInteger, Boolean, ForeignKey, String, true
+from sqlalchemy import Boolean, String, true
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import ORMBase
 
 if TYPE_CHECKING:
-    from app.models.organization import Organization
+    from app.models.organization_member import OrganizationMember
 
 
 class User(ORMBase):
+    """Identity only. Organization membership lives on OrganizationMember."""
+
     __tablename__ = "users"
 
     email: Mapped[str] = mapped_column(
@@ -21,23 +23,18 @@ class User(ORMBase):
         String(255),
         nullable=True,
     )
-    hashed_password: Mapped[str] = mapped_column(
-        String(255),
-        nullable=False,
-    )
     is_active: Mapped[bool] = mapped_column(
         Boolean,
         server_default=true(),
         nullable=False,
     )
-
-    organization_id: Mapped[int] = mapped_column(
-        BigInteger,
-        ForeignKey("organizations.id", ondelete="CASCADE"),
+    hashed_password: Mapped[str] = mapped_column(
+        String(255),
         nullable=False,
-        index=True,
     )
 
-    organization: Mapped["Organization"] = relationship(
-        back_populates="users",
+    memberships: Mapped[list["OrganizationMember"]] = relationship(
+        back_populates="user",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
     )

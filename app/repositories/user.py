@@ -26,6 +26,14 @@ class UserRepository:
         )
         return result.scalar_one_or_none()
 
+    async def get_by_id(self, user_id: int) -> User | None:
+        """Return the user with this id, or ``None`` if absent.
+
+        Uses ``session.get`` -- the primary-key fast path that checks the
+        identity map before hitting the database.
+        """
+        return await self._session.get(User, user_id)
+
     async def create(self, *, email: str, hashed_password: str,
                      full_name: str | None) -> User:
         """Add a new user and flush so ``user.id`` is available. No commit."""

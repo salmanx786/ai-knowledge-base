@@ -11,7 +11,7 @@ The service holds the AsyncSession and the repositories bound to it, so every
 operation in a single service call shares one unit of work.
 """
 
-from app.core.jwt import create_access_token
+from app.core.jwt import TokenError, create_access_token, verify_access_token
 from app.core.security import hash_password, verify_password
 from app.models.organization_member import MembershipStatus, OrganizationRole
 from app.models.user import User
@@ -88,6 +88,37 @@ class AuthenticationService:
             # timing; kept simple here since endpoints/JWT are out of scope.
             raise InvalidCredentialsError()
         if not verify_password(data.password, user.hashed_password):
+            raise InvalidCredentialsError()
+        return user
+
+    async def resolve_user_from_token(self, token: str) -> User:
+        """Verify an access token and load the user it belongs to.
+
+        The inverse of ``login``: it takes a bearer token, reuses the JWT
+        service to verify the signature/expiry and pull the ``sub`` claim,
+        then loads that user. Read-only, so there is no transaction to commit.
+
+        Failure modes collapse into one domain error each so the API layer can
+        map them to 401 without knowing about JWT internals:
+
+        - a token that is malformed, unsigned/forged, or expired, or is missing
+          ``sub`` -> ``TokenError`` (raised by the JWT service, propagated here)
+        - a token whose ``sub`` is not an integer or names a user that no longer
+          exists -> ``InvalidCredentialsError``
+
+        A deleted-but-still-referenced user is treated the same as bad
+        credentials on purpose: the token is no longer honorable.
+        """
+        subject = verify_access_token(token)
+        try:
+            user_id = int(subject)
+        except (TypeError, ValueError) as exc:
+            # `sub` is always stringified from an int at issuance; anything else
+            # is a token we did not mint, so refuse it.
+            raise InvalidCredentialsError() from exc
+
+        user = await self._users.get_by_id(user_id)
+        if user is None:
             raise InvalidCredentialsError()
         return user
 

@@ -16,7 +16,12 @@ from app.repositories.errors import (
     EmailAlreadyExistsError,
     InvalidCredentialsError,
 )
-from app.schemas.auth import LoginRequest, RegisterRequest, UserResponse
+from app.schemas.auth import (
+    LoginRequest,
+    RegisterRequest,
+    TokenResponse,
+    UserResponse,
+)
 from app.services.auth_service import AuthenticationService
 
 router = APIRouter(prefix="/api/v1/auth", tags=["auth"])
@@ -45,20 +50,19 @@ async def register(
 
 @router.post(
     "/login",
-    response_model=UserResponse,
+    response_model=TokenResponse,
     status_code=status.HTTP_200_OK,
-    summary="Authenticate a user with email and password",
+    summary="Authenticate a user and issue a JWT access token",
 )
 async def login(
     payload: LoginRequest,
     service: AuthenticationService = Depends(get_auth_service),
-) -> UserResponse:
-    """Verify credentials and return the user. No token is issued yet."""
+) -> TokenResponse:
+    """Verify credentials and return a signed JWT bearer token."""
     try:
-        user = await service.authenticate_user(payload)
+        return await service.login(payload)
     except InvalidCredentialsError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid email or password.",
         )
-    return UserResponse.model_validate(user)

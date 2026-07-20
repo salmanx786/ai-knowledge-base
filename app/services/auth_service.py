@@ -11,6 +11,7 @@ The service holds the AsyncSession and the repositories bound to it, so every
 operation in a single service call shares one unit of work.
 """
 
+from app.core.jwt import create_access_token
 from app.core.security import hash_password, verify_password
 from app.models.organization_member import MembershipStatus, OrganizationRole
 from app.models.user import User
@@ -20,7 +21,7 @@ from app.repositories.errors import (
 )
 from app.repositories.organization import OrganizationRepository
 from app.repositories.user import UserRepository
-from app.schemas.auth import LoginRequest, RegisterRequest
+from app.schemas.auth import LoginRequest, RegisterRequest, TokenResponse
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -89,3 +90,20 @@ class AuthenticationService:
         if not verify_password(data.password, user.hashed_password):
             raise InvalidCredentialsError()
         return user
+
+    async def login(self, data: LoginRequest) -> TokenResponse:
+        """Authenticate the user and issue a signed access token.
+
+        This is a thin orchestration layer on top of ``authenticate_user``:
+        credential verification stays in one place and remains independently
+        reusable, while ``login`` owns the "turn a verified user into a token"
+        step. Propagates ``InvalidCredentialsError`` unchanged on bad
+        credentials so the endpoint maps it to 401.
+        """
+        user = await self.authenticate_user(data)
+        access_token, expires_in = create_access_token(subject=user.id)
+        return TokenResponse(
+            access_token=access_token,
+            token_type="Bearer",
+            expires_in=expires_in,
+        )

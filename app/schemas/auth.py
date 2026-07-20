@@ -34,3 +34,20 @@ class UserResponse(BaseModel):
     email: EmailStr
     full_name: str | None
     is_active: bool
+
+
+class TokenResponse(BaseModel):
+    """OAuth2-style bearer token envelope returned on successful login.
+
+    Field names follow RFC 6749 (the OAuth2 token response) so standard
+    clients understand them out of the box:
+
+    - ``access_token`` -- the signed JWT
+    - ``token_type``   -- always ``"Bearer"``; tells the client how to send it
+      back (``Authorization: Bearer <token>``)
+    - ``expires_in``   -- token lifetime in seconds from issuance
+    """
+
+    access_token: str
+    token_type: str = "Bearer"
+    expires_in: int

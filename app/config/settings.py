@@ -8,6 +8,15 @@ class Settings(BaseSettings):
 
     database_url: str
 
+    # JWT signing. `jwt_secret` is required and has no default on purpose:
+    # a missing secret should fail fast at startup rather than fall back to a
+    # guessable value. HS256 (symmetric HMAC) is the right choice while a
+    # single service both issues and verifies tokens; switch to an RS/ES
+    # asymmetric algorithm only when verification moves to a separate service.
+    jwt_secret: str
+    jwt_algorithm: str = "HS256"
+    jwt_access_token_expire_minutes: int = 30
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",

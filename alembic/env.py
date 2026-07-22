@@ -12,6 +12,7 @@ from app.db.base import Base
 
 # Import models so their tables register on Base.metadata for autogenerate.
 # Add new model modules here as they are created.
+from app.models import chunk  # noqa: F401
 from app.models import document  # noqa: F401
 from app.models import organization  # noqa: F401
 from app.models import organization_member  # noqa: F401

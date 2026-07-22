@@ -18,5 +18,6 @@ class DocumentResponse(BaseModel):
     id: int
     owner_id: int
     filename: str
+    extracted_text: str | None
     created_at: datetime
     updated_at: datetime

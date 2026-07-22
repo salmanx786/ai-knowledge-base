@@ -27,6 +27,7 @@ from app.config.settings import settings
 from app.models.document import Document
 from app.repositories.document import DocumentRepository
 from app.repositories.errors import DocumentNotFoundError
+from app.services.pdf_text import extract_pdf_text
 
 
 class DocumentService:
@@ -37,10 +38,13 @@ class DocumentService:
     async def upload_document(
         self, *, owner_id: int, upload: UploadFile
     ) -> Document:
-        """Save an uploaded PDF and create the document row that describes it.
+        """Save an uploaded PDF, extract its text, and create the document row.
 
-        The file is written to disk first, then the metadata row is committed.
-        Ownership comes from the authenticated caller, never the request.
+        Order matters: the file is written to disk, its text is extracted, then
+        the metadata row (including the text) is committed. If extraction fails
+        the saved file is intentionally left in place and ``TextExtractionError``
+        propagates -- no row is written, nothing is deleted. Ownership comes
+        from the authenticated caller, never the request.
         """
         # Per-user directory keeps one user's files apart from another's.
         # owner_id is an int from the DB, so it cannot inject path segments.
@@ -48,13 +52,22 @@ class DocumentService:
         user_dir.mkdir(parents=True, exist_ok=True)
 
         # uuid4 name is unique and strips any path the client put in `filename`.
-        stored_path = user_dir / f"{uuid.uuid4().hex}.pdf"
+        # Only this basename is persisted; the full path is derived from the
+        # upload root + owner_id + storage_filename, never stored or exposed.
+        storage_filename = f"{uuid.uuid4().hex}.pdf"
+        stored_path = user_dir / storage_filename
         stored_path.write_bytes(await upload.read())
+
+        # Extract before the row is written. On failure this raises
+        # TextExtractionError (mapped to 500 upstream); the file above is left
+        # on disk by design and no partial row is created.
+        extracted_text = extract_pdf_text(stored_path)
 
         document = await self._documents.create(
             owner_id=owner_id,
-            filename=upload.filename or stored_path.name,
-            file_path=str(stored_path),
+            filename=upload.filename or storage_filename,
+            storage_filename=storage_filename,
+            extracted_text=extracted_text,
         )
         await self._session.commit()
         await self._session.refresh(document)

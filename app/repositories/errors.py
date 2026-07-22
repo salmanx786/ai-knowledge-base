@@ -26,3 +26,12 @@ class DocumentNotFoundError(Exception):
     can return an identical 404 and never leak the existence of other users'
     documents.
     """
+
+
+class TextExtractionError(Exception):
+    """Raised when a saved PDF cannot be opened or read for text extraction.
+
+    Signals a malformed, truncated, or otherwise unreadable PDF. The API maps
+    this to a 500: the file was accepted and stored, but the server could not
+    process it. The uploaded file is left in place, not deleted.
+    """

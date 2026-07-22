@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING
 
-from sqlalchemy import BigInteger, ForeignKey, String
+from sqlalchemy import BigInteger, ForeignKey, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import ORMBase
@@ -21,6 +21,11 @@ class Document(ORMBase):
     The full path is never persisted -- it is derived on demand from the
     upload root, the ``owner_id``, and ``storage_filename`` -- so the storage
     layout can move without a data migration and is never exposed to clients.
+
+    ``extracted_text`` holds the concatenated text of every page, pulled out of
+    the PDF once at upload time. It is nullable because the column exists
+    independently of extraction ever having run; in practice a successful
+    upload always populates it (an empty PDF yields an empty string, not NULL).
     """
 
     __tablename__ = "documents"
@@ -39,6 +44,10 @@ class Document(ORMBase):
     storage_filename: Mapped[str] = mapped_column(
         String(255),
         nullable=False,
+    )
+    extracted_text: Mapped[str | None] = mapped_column(
+        Text,
+        nullable=True,
     )
 
     owner: Mapped["User"] = relationship()

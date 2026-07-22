@@ -14,7 +14,7 @@ from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
 from app.dependencies.auth import get_current_user
 from app.dependencies.documents import get_document_service
 from app.models.user import User
-from app.repositories.errors import DocumentNotFoundError
+from app.repositories.errors import DocumentNotFoundError, TextExtractionError
 from app.schemas.document import DocumentResponse
 from app.services.document_service import DocumentService
 
@@ -36,15 +36,23 @@ async def upload_document(
 
     Only PDFs are accepted; anything else is rejected with 415. The document is
     owned by the authenticated user -- ownership is never taken from the request.
+    A PDF that cannot be read for text extraction returns 500; the file is still
+    saved on disk and is not deleted.
     """
     if not (file.filename or "").lower().endswith(".pdf"):
         raise HTTPException(
             status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
             detail="Only PDF files are accepted.",
         )
-    document = await service.upload_document(
-        owner_id=current_user.id, upload=file
-    )
+    try:
+        document = await service.upload_document(
+            owner_id=current_user.id, upload=file
+        )
+    except TextExtractionError:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to extract text from the uploaded PDF.",
+        )
     return DocumentResponse.model_validate(document)
 
 

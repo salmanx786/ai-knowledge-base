@@ -1,4 +1,4 @@
-"""simplify documents: replace title/status with filename/file_path
+"""simplify documents: replace title/status with filename/storage_filename
 
 Revision ID: 0006_document_files
 Revises: 0005_create_documents
@@ -32,15 +32,16 @@ _status_enum = sa.Enum(
 
 def upgrade() -> None:
     # An uploaded document is now just its file: the metadata-only title and the
-    # lifecycle status are gone. filename is the original client name; file_path
-    # is where the bytes landed under the uploads/ root.
+    # lifecycle status are gone. filename is the original client name;
+    # storage_filename is the generated on-disk basename (UUID + .pdf). The full
+    # path is derived at runtime, never stored.
     op.add_column(
         "documents",
         sa.Column("filename", sa.String(length=255), nullable=False),
     )
     op.add_column(
         "documents",
-        sa.Column("file_path", sa.String(length=1024), nullable=False),
+        sa.Column("storage_filename", sa.String(length=255), nullable=False),
     )
     op.drop_column("documents", "status")
     op.drop_column("documents", "title")
@@ -60,5 +61,5 @@ def downgrade() -> None:
             nullable=False,
         ),
     )
-    op.drop_column("documents", "file_path")
+    op.drop_column("documents", "storage_filename")
     op.drop_column("documents", "filename")

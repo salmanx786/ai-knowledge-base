@@ -23,13 +23,19 @@ class DocumentRepository:
         self._session = session
 
     async def create(
-        self, *, owner_id: int, filename: str, file_path: str
+        self,
+        *,
+        owner_id: int,
+        filename: str,
+        storage_filename: str,
+        extracted_text: str | None = None,
     ) -> Document:
         """Add a new document and flush so ``document.id`` is available. No commit."""
         document = Document(
             owner_id=owner_id,
             filename=filename,
-            file_path=file_path,
+            storage_filename=storage_filename,
+            extracted_text=extracted_text,
         )
         self._session.add(document)
         # flush (not commit) so the DB assigns document.id and surfaces any

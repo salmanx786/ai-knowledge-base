@@ -17,6 +17,10 @@ class Settings(BaseSettings):
     jwt_algorithm: str = "HS256"
     jwt_access_token_expire_minutes: int = 30
 
+    # Local filesystem root for uploaded documents. Files are saved under
+    # ``<upload_dir>/<owner_id>/``; the directory is created on first upload.
+    upload_dir: str = "uploads"
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",

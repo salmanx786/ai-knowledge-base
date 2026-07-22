@@ -7,9 +7,7 @@ the generated primary key is populated without committing.
 
 Every read is *ownership-scoped*: ``owner_id`` is a required argument, not an
 optional filter, so it is impossible to accidentally load another user's row
-through this repository. That keeps the "users may only access their own
-documents" rule enforced at the data-access layer rather than relying solely on
-the service to remember to filter.
+through this repository.
 """
 
 from collections.abc import Sequence
@@ -17,7 +15,7 @@ from collections.abc import Sequence
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.document import Document, DocumentStatus
+from app.models.document import Document
 
 
 class DocumentRepository:
@@ -25,10 +23,14 @@ class DocumentRepository:
         self._session = session
 
     async def create(
-        self, *, owner_id: int, title: str, status: DocumentStatus
+        self, *, owner_id: int, filename: str, file_path: str
     ) -> Document:
         """Add a new document and flush so ``document.id`` is available. No commit."""
-        document = Document(owner_id=owner_id, title=title, status=status)
+        document = Document(
+            owner_id=owner_id,
+            filename=filename,
+            file_path=file_path,
+        )
         self._session.add(document)
         # flush (not commit) so the DB assigns document.id and surfaces any
         # constraint violation here, while the write stays part of the

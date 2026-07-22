@@ -5,22 +5,28 @@ their own documents. That rule is expressed once, structurally -- every method
 takes the acting ``owner_id`` and passes it through to ownership-scoped
 repository queries, so there is no code path that returns another user's row.
 
+File handling is intentionally minimal for this portfolio project: PDFs are
+saved directly under ``uploads/<owner_id>/`` with a generated name, then a row
+is written. No storage abstraction, no cloud prep, no orphan-cleanup system.
+
 Transaction handling: these endpoints share one request-scoped session with
 ``get_current_user``, which issues a SELECT (autobegining a transaction) before
 the service runs. That rules out ``async with session.begin()`` -- it raises if
 a transaction is already open -- so writes commit explicitly and roll back on
-failure. ``get_db`` still closes (and thus rolls back) the session if an error
-escapes, this just makes the boundary explicit and local.
+failure.
 """
 
+import uuid
 from collections.abc import Sequence
+from pathlib import Path
 
+from fastapi import UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.config.settings import settings
 from app.models.document import Document
 from app.repositories.document import DocumentRepository
 from app.repositories.errors import DocumentNotFoundError
-from app.schemas.document import DocumentCreate
 
 
 class DocumentService:
@@ -28,28 +34,29 @@ class DocumentService:
         self._session = session
         self._documents = DocumentRepository(session)
 
-    async def create_document(
-        self, *, owner_id: int, data: DocumentCreate
+    async def upload_document(
+        self, *, owner_id: int, upload: UploadFile
     ) -> Document:
-        """Create a document owned by ``owner_id``.
+        """Save an uploaded PDF and create the document row that describes it.
 
-        Ownership comes from the authenticated user (the caller), never from
-        the request payload, so a client cannot create a document on another
-        user's behalf.
+        The file is written to disk first, then the metadata row is committed.
+        Ownership comes from the authenticated caller, never the request.
         """
-        try:
-            document = await self._documents.create(
-                owner_id=owner_id,
-                title=data.title,
-                status=data.status,
-            )
-            await self._session.commit()
-        except Exception:
-            await self._session.rollback()
-            raise
-        # commit() expired attributes; refresh so the returned instance carries
-        # server-generated columns (id, timestamps, status default) for
-        # serialization.
+        # Per-user directory keeps one user's files apart from another's.
+        # owner_id is an int from the DB, so it cannot inject path segments.
+        user_dir = Path(settings.upload_dir) / str(owner_id)
+        user_dir.mkdir(parents=True, exist_ok=True)
+
+        # uuid4 name is unique and strips any path the client put in `filename`.
+        stored_path = user_dir / f"{uuid.uuid4().hex}.pdf"
+        stored_path.write_bytes(await upload.read())
+
+        document = await self._documents.create(
+            owner_id=owner_id,
+            filename=upload.filename or stored_path.name,
+            file_path=str(stored_path),
+        )
+        await self._session.commit()
         await self._session.refresh(document)
         return document
 
@@ -85,9 +92,5 @@ class DocumentService:
         )
         if document is None:
             raise DocumentNotFoundError(document_id)
-        try:
-            await self._documents.delete(document)
-            await self._session.commit()
-        except Exception:
-            await self._session.rollback()
-            raise
+        await self._documents.delete(document)
+        await self._session.commit()

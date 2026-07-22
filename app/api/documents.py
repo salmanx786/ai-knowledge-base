@@ -1,40 +1,49 @@
 """Document HTTP endpoints.
 
-Same thin-controller style as the auth router: validate input via schemas,
-delegate to DocumentService, translate the one domain error into an
-HTTPException. Every route is protected by ``get_current_user`` and passes the
-authenticated user's id to the service as the owner -- the client never
-supplies ownership, and the service never trusts anything but ``current_user``.
+Same thin-controller style as the auth router: delegate to DocumentService and
+translate the one domain error into an HTTPException. Every route is protected
+by ``get_current_user`` and passes the authenticated user's id to the service
+as the owner -- the client never supplies ownership, and the service never
+trusts anything but ``current_user``.
 """
 
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
 
 from app.dependencies.auth import get_current_user
 from app.dependencies.documents import get_document_service
 from app.models.user import User
 from app.repositories.errors import DocumentNotFoundError
-from app.schemas.document import DocumentCreate, DocumentResponse
+from app.schemas.document import DocumentResponse
 from app.services.document_service import DocumentService
 
 router = APIRouter(prefix="/api/v1/documents", tags=["documents"])
 
 
 @router.post(
-    "",
+    "/upload",
     response_model=DocumentResponse,
     status_code=status.HTTP_201_CREATED,
-    summary="Create a document owned by the current user",
+    summary="Upload a PDF and create a document for the current user",
 )
-async def create_document(
-    payload: DocumentCreate,
+async def upload_document(
     current_user: Annotated[User, Depends(get_current_user)],
     service: Annotated[DocumentService, Depends(get_document_service)],
+    file: Annotated[UploadFile, File(description="PDF file")],
 ) -> DocumentResponse:
-    """Create a document owned by the authenticated user."""
-    document = await service.create_document(
-        owner_id=current_user.id, data=payload
+    """Save an uploaded PDF and create the document that describes it.
+
+    Only PDFs are accepted; anything else is rejected with 415. The document is
+    owned by the authenticated user -- ownership is never taken from the request.
+    """
+    if not (file.filename or "").lower().endswith(".pdf"):
+        raise HTTPException(
+            status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
+            detail="Only PDF files are accepted.",
+        )
+    document = await service.upload_document(
+        owner_id=current_user.id, upload=file
     )
     return DocumentResponse.model_validate(document)
 

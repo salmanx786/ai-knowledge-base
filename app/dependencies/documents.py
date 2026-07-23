@@ -12,6 +12,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.dependencies.db import get_db
 from app.services.document_service import DocumentService
+from app.services.search_service import SearchService
 
 
 async def get_document_service(
@@ -19,3 +20,10 @@ async def get_document_service(
 ) -> AsyncGenerator[DocumentService, None]:
     """Provide a DocumentService bound to the request's DB session."""
     yield DocumentService(session)
+
+
+async def get_search_service(
+    session: AsyncSession = Depends(get_db),
+) -> AsyncGenerator[SearchService, None]:
+    """Provide a SearchService bound to the request's DB session."""
+    yield SearchService(session)

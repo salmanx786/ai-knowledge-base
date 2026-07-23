@@ -12,11 +12,13 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
 
 from app.dependencies.auth import get_current_user
-from app.dependencies.documents import get_document_service
+from app.dependencies.documents import get_document_service, get_search_service
 from app.models.user import User
 from app.repositories.errors import DocumentNotFoundError, TextExtractionError
 from app.schemas.document import DocumentResponse
+from app.schemas.search import SearchRequest, SearchResultResponse
 from app.services.document_service import DocumentService
+from app.services.search_service import SearchService
 
 router = APIRouter(prefix="/api/v1/documents", tags=["documents"])
 
@@ -123,3 +125,26 @@ async def delete_document(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Document not found.",
         )
+
+
+@router.post(
+    "/search",
+    response_model=list[SearchResultResponse],
+    status_code=status.HTTP_200_OK,
+    summary="Search the current user's document chunks by semantic similarity",
+)
+async def search_documents(
+    current_user: Annotated[User, Depends(get_current_user)],
+    service: Annotated[SearchService, Depends(get_search_service)],
+    body: SearchRequest,
+) -> list[SearchResultResponse]:
+    """Return the top-K chunks most similar to ``query``.
+
+    Only chunks belonging to the authenticated user's documents are searched.
+    Returns an empty list when the user has no indexed chunks.
+    """
+    return await service.search(
+        owner_id=current_user.id,
+        query=body.query,
+        limit=body.limit,
+    )

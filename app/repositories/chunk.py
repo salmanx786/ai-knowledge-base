@@ -15,6 +15,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.chunk import DocumentChunk
+from app.models.document import Document
 
 
 class DocumentChunkRepository:
@@ -61,5 +62,23 @@ class DocumentChunkRepository:
             select(DocumentChunk)
             .where(DocumentChunk.document_id == document_id)
             .order_by(DocumentChunk.chunk_index)
+        )
+        return result.scalars().all()
+
+    async def list_for_user(self, *, owner_id: int) -> Sequence[DocumentChunk]:
+        """Return all chunks belonging to documents owned by ``owner_id``.
+
+        Joins through Document so ownership is enforced at the query level --
+        a chunk whose document belongs to a different user is never returned.
+        Only chunks with a non-null embedding are included; chunks from empty
+        PDFs (no text extracted) have no embedding and cannot be ranked.
+        """
+        result = await self._session.execute(
+            select(DocumentChunk)
+            .join(Document, DocumentChunk.document_id == Document.id)
+            .where(
+                Document.owner_id == owner_id,
+                DocumentChunk.embedding.is_not(None),
+            )
         )
         return result.scalars().all()

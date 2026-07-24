@@ -11,6 +11,7 @@ from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.dependencies.db import get_db
+from app.services.chat_service import ChatService
 from app.services.document_service import DocumentService
 from app.services.search_service import SearchService
 
@@ -27,3 +28,10 @@ async def get_search_service(
 ) -> AsyncGenerator[SearchService, None]:
     """Provide a SearchService bound to the request's DB session."""
     yield SearchService(session)
+
+
+async def get_chat_service(
+    session: AsyncSession = Depends(get_db),
+) -> AsyncGenerator[ChatService, None]:
+    """Provide a ChatService bound to the request's DB session."""
+    yield ChatService(session)

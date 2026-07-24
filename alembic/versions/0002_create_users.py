@@ -55,13 +55,13 @@ def upgrade() -> None:
             ondelete="CASCADE",
         ),
         sa.PrimaryKeyConstraint("id"),
+        sa.UniqueConstraint("email", name="uq_users_email"),
     )
     op.create_index(
         "ix_users_organization_id",
         "users",
         ["organization_id"],
     )
-    op.create_unique_constraint("uq_users_email", "users", ["email"])
 
 
 def downgrade() -> None:

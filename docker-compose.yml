@@ -1,0 +1,98 @@
+# docker-compose.yml — local/production-like stack: API + PostgreSQL.
+#
+# Secrets and tunables are read from a compose-level .env file (same directory)
+# via ${VAR} interpolation, so nothing sensitive is committed here. Copy
+# .env.example to .env and fill it in before `docker compose up`.
+
+services:
+  # ---------------------------------------------------------------------------
+  # PostgreSQL — the application database.
+  # ---------------------------------------------------------------------------
+  postgres:
+    image: postgres:16-alpine          # Alpine keeps the DB image small.
+    restart: unless-stopped            # Survive daemon/host restarts, but stay
+                                       # down if an operator stopped it on purpose.
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-app}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-app_password}
+      POSTGRES_DB: ${POSTGRES_DB:-ai_knowledge_base}
+    volumes:
+      # Named volume => data survives container recreation and image upgrades.
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      # pg_isready reports true readiness; the API waits on this (see below),
+      # so migrations never race an unready database on cold start.
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-app} -d ${POSTGRES_DB:-ai_knowledge_base}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # ---------------------------------------------------------------------------
+  # migrate — one-shot job: apply Alembic migrations, then exit.
+  #
+  # This is the "deploy -> migrate once -> start app" architecture. It runs to
+  # completion exactly once per `up`; the API waits for it to finish (see
+  # depends_on below), so migrations never run on every container start and
+  # multiple API replicas never race each other.
+  # ---------------------------------------------------------------------------
+  migrate:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: "no"                      # A job, not a service: run once, exit.
+    depends_on:
+      postgres:
+        condition: service_healthy
+    entrypoint: ["alembic", "upgrade", "head"]   # Override the server entrypoint.
+    environment:
+      # Same DB URL as the API; alembic/env.py reads it from settings.
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-app}:${POSTGRES_PASSWORD:-app_password}@postgres:5432/${POSTGRES_DB:-ai_knowledge_base}
+      # jwt_secret is a required setting, so it must be present even though the
+      # migration path never uses it (Settings() is constructed at import time).
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
+
+  # ---------------------------------------------------------------------------
+  # API — the FastAPI service (uvicorn only; migrations already applied above).
+  # ---------------------------------------------------------------------------
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      # Start only after the DB is healthy AND migrations have completed once.
+      postgres:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    environment:
+      # Async driver (asyncpg) + the compose service name `postgres` as host.
+      # This OVERRIDES any localhost DATABASE_URL from a dev .env on purpose.
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-app}:${POSTGRES_PASSWORD:-app_password}@postgres:5432/${POSTGRES_DB:-ai_knowledge_base}
+      # Uploads live on a mounted volume, not ephemeral container storage.
+      UPLOAD_DIR: /app/uploads
+      PORT: "8000"
+      # Secrets / config sourced from the compose .env (never hard-coded here).
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
+      JWT_ALGORITHM: ${JWT_ALGORITHM:-HS256}
+      JWT_ACCESS_TOKEN_EXPIRE_MINUTES: ${JWT_ACCESS_TOKEN_EXPIRE_MINUTES:-30}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-2.5-flash}
+    volumes:
+      # Named volume for uploaded PDFs => they survive container restarts,
+      # recreation, and image rebuilds.
+      - uploads_data:/app/uploads
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=4).status==200 else 1)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 40s          # Grace for migrations + first model load.
+
+# Named volumes are managed by Docker and decoupled from container lifecycles.
+volumes:
+  postgres_data:
+  uploads_data:

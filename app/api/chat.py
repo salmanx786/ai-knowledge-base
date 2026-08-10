@@ -7,9 +7,13 @@ the owner -- the client never supplies ownership, so retrieval is confined to
 the caller's own documents.
 """
 
+import logging
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
+
+logger = logging.getLogger(__name__)
+
 
 from app.dependencies.auth import get_current_user
 from app.dependencies.documents import get_chat_service
@@ -52,11 +56,16 @@ async def chat(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="No relevant documents found.",
         )
-    except LLMConfigurationError:
-        # Operator/deployment fault, not the caller's. Map to a generic 500 and
-        # do not echo the internal detail (which names the missing setting); the
-        # exception message is left for the logs.
+    except LLMConfigurationError as exc:
+        logger.error(f"LLM configuration error: {exc}", exc_info=True)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="LLM is not configured.",
         )
+    except Exception as exc:
+        logger.error(f"Unexpected error in chat endpoint: {exc}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="An unexpected error occurred during chat.",
+        )
+

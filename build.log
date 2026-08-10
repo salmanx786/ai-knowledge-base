@@ -1,0 +1,383 @@
+#1 [internal] load local bake definitions
+#1 reading from stdin 1.02kB done
+#1 DONE 0.0s
+
+#2 [migrate internal] load build definition from Dockerfile
+#2 transferring dockerfile: 5.78kB 0.0s done
+#2 DONE 0.0s
+
+#3 [migrate] resolve image config for docker-image://docker.io/docker/dockerfile:1
+#3 ...
+
+#4 [auth] docker/dockerfile:pull token for registry-1.docker.io
+#4 DONE 0.0s
+
+#3 [migrate] resolve image config for docker-image://docker.io/docker/dockerfile:1
+#3 DONE 10.1s
+
+#5 [migrate] docker-image://docker.io/docker/dockerfile:1@sha256:87999aa3d42bdc6bea60565083ee17e86d1f3339802f543c0d03998580f9cb89
+#5 resolve docker.io/docker/dockerfile:1@sha256:87999aa3d42bdc6bea60565083ee17e86d1f3339802f543c0d03998580f9cb89 0.0s done
+#5 CACHED
+
+#6 [migrate internal] load metadata for docker.io/library/python:3.12-slim
+#6 ...
+
+#7 [auth] library/python:pull token for registry-1.docker.io
+#7 DONE 0.0s
+
+#6 [api internal] load metadata for docker.io/library/python:3.12-slim
+#6 DONE 3.7s
+
+#8 [api internal] load .dockerignore
+#8 transferring context: 899B done
+#8 DONE 0.0s
+
+#9 [api internal] load build context
+#9 DONE 0.0s
+
+#10 [api builder 1/6] FROM docker.io/library/python:3.12-slim@sha256:646fb0bca3dd3ea1bcc6feb72c17ed16eed6e10cffc732fcc1478bd3e7f02d7b
+#10 resolve docker.io/library/python:3.12-slim@sha256:646fb0bca3dd3ea1bcc6feb72c17ed16eed6e10cffc732fcc1478bd3e7f02d7b 0.0s done
+#10 ...
+
+#9 [migrate internal] load build context
+#9 transferring context: 3.00kB 0.0s done
+#9 DONE 0.1s
+
+#10 [migrate builder 1/6] FROM docker.io/library/python:3.12-slim@sha256:646fb0bca3dd3ea1bcc6feb72c17ed16eed6e10cffc732fcc1478bd3e7f02d7b
+#10 resolve docker.io/library/python:3.12-slim@sha256:646fb0bca3dd3ea1bcc6feb72c17ed16eed6e10cffc732fcc1478bd3e7f02d7b 0.0s done
+#10 sha256:b3c7a9bdb4f2a30d0a1358438d1539c06b86da99135cfd9d92756863cc87ae18 0B / 249B 0.2s
+#10 sha256:c85ad0bcaca895afa08053538ec1ea7642c7e9e05f5684d18e3627a2316ca8ae 0B / 12.11MB 0.2s
+#10 sha256:5a31db4cd47898e862a567028aa41f7a11d814cf69be6904173402a8b8eac5cb 0B / 1.29MB 0.2s
+#10 sha256:26c307b5e35a59ce911f5fde5b9458120ec8734e831ea2da5649a9ad14abfd3d 0B / 29.78MB 0.2s
+#10 sha256:b3c7a9bdb4f2a30d0a1358438d1539c06b86da99135cfd9d92756863cc87ae18 249B / 249B 0.3s done
+#10 sha256:26c307b5e35a59ce911f5fde5b9458120ec8734e831ea2da5649a9ad14abfd3d 2.10MB / 29.78MB 3.0s
+#10 sha256:26c307b5e35a59ce911f5fde5b9458120ec8734e831ea2da5649a9ad14abfd3d 4.19MB / 29.78MB 4.4s
+#10 sha256:c85ad0bcaca895afa08053538ec1ea7642c7e9e05f5684d18e3627a2316ca8ae 1.05MB / 12.11MB 4.8s
+#10 sha256:5a31db4cd47898e862a567028aa41f7a11d814cf69be6904173402a8b8eac5cb 0B / 1.29MB 5.3s
+#10 sha256:5a31db4cd47898e862a567028aa41f7a11d814cf69be6904173402a8b8eac5cb 1.05MB / 1.29MB 6.2s
+#10 sha256:26c307b5e35a59ce911f5fde5b9458120ec8734e831ea2da5649a9ad14abfd3d 6.29MB / 29.78MB 6.5s
+#10 sha256:5a31db4cd47898e862a567028aa41f7a11d814cf69be6904173402a8b8eac5cb 1.29MB / 1.29MB 6.6s done
+#10 sha256:26c307b5e35a59ce911f5fde5b9458120ec8734e831ea2da5649a9ad14abfd3d 8.39MB / 29.78MB 8.1s
+#10 sha256:c85ad0bcaca895afa08053538ec1ea7642c7e9e05f5684d18e3627a2316ca8ae 1.05MB / 12.11MB 9.9s
+#10 sha256:26c307b5e35a59ce911f5fde5b9458120ec8734e831ea2da5649a9ad14abfd3d 10.49MB / 29.78MB 9.9s
+#10 sha256:c85ad0bcaca895afa08053538ec1ea7642c7e9e05f5684d18e3627a2316ca8ae 2.10MB / 12.11MB 10.8s
+#10 sha256:26c307b5e35a59ce911f5fde5b9458120ec8734e831ea2da5649a9ad14abfd3d 12.58MB / 29.78MB 11.3s
+#10 sha256:26c307b5e35a59ce911f5fde5b9458120ec8734e831ea2da5649a9ad14abfd3d 14.68MB / 29.78MB 13.4s
+#10 sha256:26c307b5e35a59ce911f5fde5b9458120ec8734e831ea2da5649a9ad14abfd3d 16.78MB / 29.78MB 15.0s
+#10 sha256:c85ad0bcaca895afa08053538ec1ea7642c7e9e05f5684d18e3627a2316ca8ae 2.10MB / 12.11MB 15.9s
+#10 sha256:c85ad0bcaca895afa08053538ec1ea7642c7e9e05f5684d18e3627a2316ca8ae 3.15MB / 12.11MB 16.4s
+#10 sha256:26c307b5e35a59ce911f5fde5b9458120ec8734e831ea2da5649a9ad14abfd3d 18.87MB / 29.78MB 16.7s
+#10 sha256:26c307b5e35a59ce911f5fde5b9458120ec8734e831ea2da5649a9ad14abfd3d 20.97MB / 29.78MB 17.9s
+#10 sha256:26c307b5e35a59ce911f5fde5b9458120ec8734e831ea2da5649a9ad14abfd3d 23.07MB / 29.78MB 19.4s
+#10 sha256:c85ad0bcaca895afa08053538ec1ea7642c7e9e05f5684d18e3627a2316ca8ae 3.15MB / 12.11MB 21.5s
+#10 sha256:26c307b5e35a59ce911f5fde5b9458120ec8734e831ea2da5649a9ad14abfd3d 25.17MB / 29.78MB 21.5s
+#10 sha256:26c307b5e35a59ce911f5fde5b9458120ec8734e831ea2da5649a9ad14abfd3d 27.26MB / 29.78MB 22.4s
+#10 sha256:26c307b5e35a59ce911f5fde5b9458120ec8734e831ea2da5649a9ad14abfd3d 29.36MB / 29.78MB 23.9s
+#10 sha256:c85ad0bcaca895afa08053538ec1ea7642c7e9e05f5684d18e3627a2316ca8ae 4.19MB / 12.11MB 24.3s
+#10 sha256:26c307b5e35a59ce911f5fde5b9458120ec8734e831ea2da5649a9ad14abfd3d 29.78MB / 29.78MB 24.2s done
+#10 extracting sha256:26c307b5e35a59ce911f5fde5b9458120ec8734e831ea2da5649a9ad14abfd3d
+#10 extracting sha256:26c307b5e35a59ce911f5fde5b9458120ec8734e831ea2da5649a9ad14abfd3d 1.0s done
+#10 extracting sha256:5a31db4cd47898e862a567028aa41f7a11d814cf69be6904173402a8b8eac5cb
+#10 extracting sha256:5a31db4cd47898e862a567028aa41f7a11d814cf69be6904173402a8b8eac5cb 0.2s done
+#10 sha256:c85ad0bcaca895afa08053538ec1ea7642c7e9e05f5684d18e3627a2316ca8ae 5.24MB / 12.11MB 28.2s
+#10 sha256:c85ad0bcaca895afa08053538ec1ea7642c7e9e05f5684d18e3627a2316ca8ae 6.29MB / 12.11MB 31.7s
+#10 sha256:c85ad0bcaca895afa08053538ec1ea7642c7e9e05f5684d18e3627a2316ca8ae 7.34MB / 12.11MB 34.8s
+#10 sha256:c85ad0bcaca895afa08053538ec1ea7642c7e9e05f5684d18e3627a2316ca8ae 8.39MB / 12.11MB 37.7s
+#10 sha256:c85ad0bcaca895afa08053538ec1ea7642c7e9e05f5684d18e3627a2316ca8ae 9.44MB / 12.11MB 41.1s
+#10 sha256:c85ad0bcaca895afa08053538ec1ea7642c7e9e05f5684d18e3627a2316ca8ae 10.49MB / 12.11MB 43.8s
+#10 sha256:c85ad0bcaca895afa08053538ec1ea7642c7e9e05f5684d18e3627a2316ca8ae 11.53MB / 12.11MB 47.0s
+#10 sha256:c85ad0bcaca895afa08053538ec1ea7642c7e9e05f5684d18e3627a2316ca8ae 12.11MB / 12.11MB 48.8s done
+#10 extracting sha256:c85ad0bcaca895afa08053538ec1ea7642c7e9e05f5684d18e3627a2316ca8ae
+#10 extracting sha256:c85ad0bcaca895afa08053538ec1ea7642c7e9e05f5684d18e3627a2316ca8ae 0.6s done
+#10 extracting sha256:c85ad0bcaca895afa08053538ec1ea7642c7e9e05f5684d18e3627a2316ca8ae 0.6s done
+#10 extracting sha256:b3c7a9bdb4f2a30d0a1358438d1539c06b86da99135cfd9d92756863cc87ae18 0.0s done
+#10 DONE 49.6s
+
+#11 [api builder 2/6] RUN python -m venv /opt/venv
+#11 DONE 6.0s
+
+#12 [migrate builder 3/6] WORKDIR /app
+#12 DONE 0.0s
+
+#13 [migrate builder 4/6] COPY requirements-lock.txt ./
+#13 DONE 0.0s
+
+#14 [api builder 5/6] RUN pip install --upgrade pip &&     pip install         --extra-index-url https://download.pytorch.org/whl/cpu         -r requirements-lock.txt
+#14 1.351 Requirement already satisfied: pip in /opt/venv/lib/python3.12/site-packages (25.0.1)
+#14 2.260 Collecting pip
+#14 2.954   Downloading pip-26.2.1-py3-none-any.whl.metadata (4.6 kB)
+#14 3.237 Downloading pip-26.2.1-py3-none-any.whl (1.8 MB)
+#14 ...
+
+#15 [api runtime  2/11] RUN apt-get update     && apt-get install -y --no-install-recommends libgomp1     && rm -rf /var/lib/apt/lists/*
+#15 0.997 Hit:1 http://deb.debian.org/debian trixie InRelease
+#15 1.118 Get:2 http://deb.debian.org/debian trixie-updates InRelease [47.3 kB]
+#15 1.596 Get:3 http://deb.debian.org/debian-security trixie-security InRelease [43.4 kB]
+#15 1.856 Get:4 http://deb.debian.org/debian trixie/main amd64 Packages [9673 kB]
+#15 ...
+
+#14 [api builder 5/6] RUN pip install --upgrade pip &&     pip install         --extra-index-url https://download.pytorch.org/whl/cpu         -r requirements-lock.txt
+#14 16.81    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.8/1.8 MB 124.2 kB/s eta 0:00:00
+#14 16.85 Installing collected packages: pip
+#14 16.85   Attempting uninstall: pip
+#14 16.86     Found existing installation: pip 25.0.1
+#14 16.92     Uninstalling pip-25.0.1:
+#14 17.30       Successfully uninstalled pip-25.0.1
+#14 18.55 Successfully installed pip-26.2.1
+#14 19.73 Looking in indexes: https://pypi.org/simple, https://download.pytorch.org/whl/cpu
+#14 21.11 Collecting aiosqlite==0.22.1 (from -r requirements-lock.txt (line 28))
+#14 21.59   Downloading aiosqlite-0.22.1-py3-none-any.whl.metadata (4.3 kB)
+#14 22.30 Collecting alembic==1.16.5 (from -r requirements-lock.txt (line 29))
+#14 22.45   Downloading alembic-1.16.5-py3-none-any.whl.metadata (7.3 kB)
+#14 23.75 Collecting annotated-doc==0.0.4 (from -r requirements-lock.txt (line 30))
+#14 23.90   Downloading annotated_doc-0.0.4-py3-none-any.whl.metadata (6.6 kB)
+#14 24.78 Collecting annotated-types==0.7.0 (from -r requirements-lock.txt (line 31))
+#14 24.92   Downloading annotated_types-0.7.0-py3-none-any.whl.metadata (15 kB)
+#14 26.23 Collecting anyio==4.12.1 (from -r requirements-lock.txt (line 32))
+#14 26.39   Downloading anyio-4.12.1-py3-none-any.whl.metadata (4.3 kB)
+#14 27.48 Collecting argon2-cffi==25.1.0 (from -r requirements-lock.txt (line 33))
+#14 27.62   Downloading argon2_cffi-25.1.0-py3-none-any.whl.metadata (4.1 kB)
+#14 28.52 Collecting argon2-cffi-bindings==25.1.0 (from -r requirements-lock.txt (line 34))
+#14 28.67   Downloading argon2_cffi_bindings-25.1.0-cp39-abi3-manylinux_2_26_x86_64.manylinux_2_28_x86_64.whl.metadata (7.4 kB)
+#14 30.87 Collecting async-timeout==5.0.1 (from -r requirements-lock.txt (line 35))
+#14 31.02   Downloading async_timeout-5.0.1-py3-none-any.whl.metadata (5.1 kB)
+#14 37.78 Collecting asyncpg==0.30.0 (from -r requirements-lock.txt (line 36))
+#14 37.93   Downloading asyncpg-0.30.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (5.0 kB)
+#14 40.12 Collecting certifi==2026.6.17 (from -r requirements-lock.txt (line 37))
+#14 40.27   Downloading certifi-2026.6.17-py3-none-any.whl.metadata (2.5 kB)
+#14 55.19 Collecting cffi==2.1.0 (from -r requirements-lock.txt (line 38))
+#14 55.34   Downloading cffi-2.1.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (2.5 kB)
+#14 ...
+
+#15 [api runtime  2/11] RUN apt-get update     && apt-get install -y --no-install-recommends libgomp1     && rm -rf /var/lib/apt/lists/*
+#15 72.45 Get:5 http://deb.debian.org/debian trixie-updates/main amd64 Packages [4412 B]
+#15 72.64 Get:6 http://deb.debian.org/debian-security trixie-security/main amd64 Packages [232 kB]
+#15 73.48 Fetched 10000 kB in 1min 13s (137 kB/s)
+#15 73.48 Reading package lists...
+#15 74.41 Reading package lists...
+#15 75.33 Building dependency tree...
+#15 75.54 Reading state information...
+#15 75.92 The following NEW packages will be installed:
+#15 75.92   libgomp1
+#15 76.16 0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+#15 76.16 Need to get 137 kB of archives.
+#15 76.16 After this operation, 377 kB of additional disk space will be used.
+#15 76.16 Get:1 http://deb.debian.org/debian trixie/main amd64 libgomp1 amd64 14.2.0-19 [137 kB]
+#15 78.50 debconf: unable to initialize frontend: Dialog
+#15 78.50 debconf: (TERM is not set, so the dialog frontend is not usable.)
+#15 78.50 debconf: falling back to frontend: Readline
+#15 78.50 debconf: unable to initialize frontend: Readline
+#15 78.50 debconf: (Can't locate Term/ReadLine.pm in @INC (you may need to install the Term::ReadLine module) (@INC entries checked: /etc/perl /usr/local/lib/x86_64-linux-gnu/perl/5.40.1 /usr/local/share/perl/5.40.1 /usr/lib/x86_64-linux-gnu/perl5/5.40 /usr/share/perl5 /usr/lib/x86_64-linux-gnu/perl-base /usr/lib/x86_64-linux-gnu/perl/5.40 /usr/share/perl/5.40 /usr/local/lib/site_perl) at /usr/share/perl5/Debconf/FrontEnd/Readline.pm line 8, <STDIN> line 1.)
+#15 78.50 debconf: falling back to frontend: Teletype
+#15 78.51 debconf: unable to initialize frontend: Teletype
+#15 78.51 debconf: (This frontend requires a controlling tty.)
+#15 78.51 debconf: falling back to frontend: Noninteractive
+#15 79.49 Fetched 137 kB in 2s (58.7 kB/s)
+#15 79.52 Selecting previously unselected package libgomp1:amd64.
+#15 79.52 (Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 5645 files and directories currently installed.)
+#15 79.53 Preparing to unpack .../libgomp1_14.2.0-19_amd64.deb ...
+#15 79.54 Unpacking libgomp1:amd64 (14.2.0-19) ...
+#15 79.58 Setting up libgomp1:amd64 (14.2.0-19) ...
+#15 79.59 Processing triggers for libc-bin (2.41-12+deb13u3) ...
+#15 DONE 79.6s
+
+#16 [api runtime  3/11] RUN groupadd --gid 10001 appuser     && useradd --uid 10001 --gid 10001 --create-home --shell /usr/sbin/nologin appuser
+#16 DONE 0.3s
+
+#17 [migrate runtime  4/11] WORKDIR /app
+#17 DONE 0.0s
+
+#14 [api builder 5/6] RUN pip install --upgrade pip &&     pip install         --extra-index-url https://download.pytorch.org/whl/cpu         -r requirements-lock.txt
+#14 75.80 Collecting charset-normalizer==3.4.9 (from -r requirements-lock.txt (line 39))
+#14 75.95   Downloading charset_normalizer-3.4.9-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (41 kB)
+#14 82.98 Collecting click==8.1.8 (from -r requirements-lock.txt (line 40))
+#14 83.12   Downloading click-8.1.8-py3-none-any.whl.metadata (2.3 kB)
+#14 114.5 Collecting cryptography==49.0.0 (from -r requirements-lock.txt (line 41))
+#14 114.7   Downloading cryptography-49.0.0-cp311-abi3-manylinux_2_34_x86_64.whl.metadata (4.3 kB)
+#14 116.2 Collecting distro==1.9.0 (from -r requirements-lock.txt (line 42))
+#14 116.3   Downloading distro-1.9.0-py3-none-any.whl.metadata (6.8 kB)
+#14 120.3 Collecting dnspython==2.8.0 (from -r requirements-lock.txt (line 43))
+#14 120.5   Downloading dnspython-2.8.0-py3-none-any.whl.metadata (5.7 kB)
+#14 122.5 Collecting email-validator==2.3.0 (from -r requirements-lock.txt (line 44))
+#14 122.7   Downloading email_validator-2.3.0-py3-none-any.whl.metadata (26 kB)
+#14 127.0 Collecting exceptiongroup==1.3.1 (from -r requirements-lock.txt (line 45))
+#14 127.2   Downloading exceptiongroup-1.3.1-py3-none-any.whl.metadata (6.7 kB)
+#14 133.2 Collecting fastapi==0.128.8 (from -r requirements-lock.txt (line 46))
+#14 133.3   Downloading fastapi-0.128.8-py3-none-any.whl.metadata (30 kB)
+#14 136.6 Collecting filelock==3.32.0 (from -r requirements-lock.txt (line 47))
+#14 136.7   Downloading filelock-3.32.0-py3-none-any.whl.metadata (2.0 kB)
+#14 139.5 Collecting fsspec==2026.6.0 (from -r requirements-lock.txt (line 48))
+#14 139.7   Downloading fsspec-2026.6.0-py3-none-any.whl.metadata (10 kB)
+#14 145.5 Collecting google-auth==2.56.2 (from -r requirements-lock.txt (line 49))
+#14 145.6   Downloading google_auth-2.56.2-py3-none-any.whl.metadata (6.0 kB)
+#14 149.8 Collecting google-genai==2.14.0 (from -r requirements-lock.txt (line 50))
+#14 150.2   Downloading google_genai-2.14.0-py3-none-any.whl.metadata (55 kB)
+#14 190.9 Collecting greenlet==3.2.5 (from -r requirements-lock.txt (line 51))
+#14 191.1   Downloading greenlet-3.2.5-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl.metadata (4.1 kB)
+#14 192.5 Collecting h11==0.16.0 (from -r requirements-lock.txt (line 52))
+#14 192.7   Downloading h11-0.16.0-py3-none-any.whl.metadata (8.3 kB)
+#14 198.2 Collecting hf-xet==1.5.2 (from -r requirements-lock.txt (line 53))
+#14 198.3   Downloading hf_xet-1.5.2-cp38-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (4.9 kB)
+#14 201.2 Collecting httpcore==1.0.9 (from -r requirements-lock.txt (line 54))
+#14 201.3   Downloading httpcore-1.0.9-py3-none-any.whl.metadata (21 kB)
+#14 205.5 Collecting httpx==0.28.1 (from -r requirements-lock.txt (line 55))
+#14 205.6   Downloading httpx-0.28.1-py3-none-any.whl.metadata (7.1 kB)
+#14 214.0 Collecting huggingface_hub==0.36.2 (from -r requirements-lock.txt (line 56))
+#14 214.4   Downloading huggingface_hub-0.36.2-py3-none-any.whl.metadata (15 kB)
+#14 218.8 Collecting idna==3.18 (from -r requirements-lock.txt (line 57))
+#14 219.6   Downloading idna-3.18-py3-none-any.whl.metadata (6.1 kB)
+#14 221.9 Collecting Jinja2==3.1.6 (from -r requirements-lock.txt (line 58))
+#14 221.9   Downloading jinja2-3.1.6-py3-none-any.whl.metadata (2.9 kB)
+#14 234.1 Collecting jiter==0.16.0 (from -r requirements-lock.txt (line 59))
+#14 234.3   Downloading jiter-0.16.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (5.2 kB)
+#14 237.5 Collecting joblib==1.5.3 (from -r requirements-lock.txt (line 60))
+#14 237.7   Downloading joblib-1.5.3-py3-none-any.whl.metadata (5.5 kB)
+#14 239.0 Collecting Mako==1.3.12 (from -r requirements-lock.txt (line 61))
+#14 239.1   Downloading mako-1.3.12-py3-none-any.whl.metadata (2.9 kB)
+#14 247.2 Collecting MarkupSafe==3.0.3 (from -r requirements-lock.txt (line 62))
+#14 247.3   Downloading markupsafe-3.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.7 kB)
+#14 248.9 Collecting mpmath==1.3.0 (from -r requirements-lock.txt (line 63))
+#14 249.1   Downloading mpmath-1.3.0-py3-none-any.whl.metadata (8.6 kB)
+#14 257.5 Collecting narwhals==2.24.0 (from -r requirements-lock.txt (line 64))
+#14 257.6   Downloading narwhals-2.24.0-py3-none-any.whl.metadata (15 kB)
+#14 261.1 Collecting networkx==3.6.1 (from -r requirements-lock.txt (line 65))
+#14 261.2   Downloading networkx-3.6.1-py3-none-any.whl.metadata (6.8 kB)
+#14 296.1 Collecting numpy==2.5.1 (from -r requirements-lock.txt (line 66))
+#14 296.8   Downloading numpy-2.5.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (6.6 kB)
+#14 307.5 Collecting openai==1.66.3 (from -r requirements-lock.txt (line 67))
+#14 307.6   Downloading openai-1.66.3-py3-none-any.whl.metadata (25 kB)
+#14 310.9 Collecting packaging==26.2 (from -r requirements-lock.txt (line 68))
+#14 311.0   Downloading packaging-26.2-py3-none-any.whl.metadata (3.5 kB)
+#14 348.8 Collecting pillow==12.3.0 (from -r requirements-lock.txt (line 69))
+#14 348.9   Downloading pillow-12.3.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (9.1 kB)
+#14 350.1 Collecting pwdlib==0.3.0 (from -r requirements-lock.txt (line 70))
+#14 350.2   Downloading pwdlib-0.3.0-py3-none-any.whl.metadata (4.1 kB)
+#14 355.6 Collecting pyasn1==0.6.4 (from -r requirements-lock.txt (line 71))
+#14 355.8   Downloading pyasn1-0.6.4-py3-none-any.whl.metadata (8.4 kB)
+#14 360.1 Collecting pyasn1_modules==0.4.2 (from -r requirements-lock.txt (line 72))
+#14 360.3   Downloading pyasn1_modules-0.4.2-py3-none-any.whl.metadata (3.5 kB)
+#14 362.4 Collecting pycparser==3.0 (from -r requirements-lock.txt (line 73))
+#14 362.6   Downloading pycparser-3.0-py3-none-any.whl.metadata (8.2 kB)
+#14 380.6 Collecting pydantic==2.13.4 (from -r requirements-lock.txt (line 74))
+#14 380.9   Downloading pydantic-2.13.4-py3-none-any.whl.metadata (109 kB)
+#14 389.4 Collecting pydantic-settings==2.11.0 (from -r requirements-lock.txt (line 75))
+#14 389.6   Downloading pydantic_settings-2.11.0-py3-none-any.whl.metadata (3.4 kB)
+#14 477.6 Collecting pydantic_core==2.46.4 (from -r requirements-lock.txt (line 76))
+#14 477.8   Downloading pydantic_core-2.46.4-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (6.6 kB)
+#14 479.9 Collecting PyJWT==2.13.0 (from -r requirements-lock.txt (line 77))
+#14 480.0   Downloading pyjwt-2.13.0-py3-none-any.whl.metadata (3.4 kB)
+#14 495.5 Collecting pymupdf==1.28.0 (from -r requirements-lock.txt (line 78))
+#14 495.7   Downloading pymupdf-1.28.0-cp310-abi3-manylinux_2_28_x86_64.whl.metadata (26 kB)
+#14 499.6 Collecting python-dotenv==1.2.1 (from -r requirements-lock.txt (line 79))
+#14 499.8   Downloading python_dotenv-1.2.1-py3-none-any.whl.metadata (25 kB)
+#14 502.2 Collecting python-multipart==0.0.20 (from -r requirements-lock.txt (line 80))
+#14 502.5   Downloading python_multipart-0.0.20-py3-none-any.whl.metadata (1.8 kB)
+#14 507.0 Collecting PyYAML==6.0.3 (from -r requirements-lock.txt (line 81))
+#14 507.2   Downloading pyyaml-6.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.4 kB)
+#14 557.6 Collecting regex==2026.7.19 (from -r requirements-lock.txt (line 82))
+#14 558.0   Downloading regex-2026.7.19-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (40 kB)
+#14 561.0 Collecting requests==2.34.2 (from -r requirements-lock.txt (line 83))
+#14 561.2   Downloading requests-2.34.2-py3-none-any.whl.metadata (4.8 kB)
+#14 573.9 Collecting safetensors==0.8.0 (from -r requirements-lock.txt (line 84))
+#14 574.0   Downloading safetensors-0.8.0-cp310-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (4.2 kB)
+#14 585.5 Collecting scikit-learn==1.9.0 (from -r requirements-lock.txt (line 85))
+#14 585.7   Downloading scikit_learn-1.9.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (11 kB)
+#14 605.4 Collecting scipy==1.18.0 (from -r requirements-lock.txt (line 86))
+#14 605.7   Downloading scipy-1.18.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (62 kB)
+#14 611.3 Collecting sentence-transformers==3.4.1 (from -r requirements-lock.txt (line 87))
+#14 611.5   Downloading sentence_transformers-3.4.1-py3-none-any.whl.metadata (10 kB)
+#14 612.8 Collecting sniffio==1.3.1 (from -r requirements-lock.txt (line 88))
+#14 613.2   Downloading sniffio-1.3.1-py3-none-any.whl.metadata (3.9 kB)
+#14 649.7 Collecting SQLAlchemy==2.0.51 (from -r requirements-lock.txt (line 89))
+#14 650.1   Downloading sqlalchemy-2.0.51-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (9.5 kB)
+#14 654.3 Collecting starlette==0.49.3 (from -r requirements-lock.txt (line 90))
+#14 654.5   Downloading starlette-0.49.3-py3-none-any.whl.metadata (6.4 kB)
+#14 656.8 Collecting sympy==1.14.0 (from -r requirements-lock.txt (line 91))
+#14 656.9   Downloading sympy-1.14.0-py3-none-any.whl.metadata (12 kB)
+#14 659.3 Collecting tenacity==9.1.4 (from -r requirements-lock.txt (line 92))
+#14 659.4   Downloading tenacity-9.1.4-py3-none-any.whl.metadata (1.2 kB)
+#14 660.4 Collecting threadpoolctl==3.6.0 (from -r requirements-lock.txt (line 93))
+#14 660.5   Downloading threadpoolctl-3.6.0-py3-none-any.whl.metadata (13 kB)
+#14 680.4 Collecting tokenizers==0.22.2 (from -r requirements-lock.txt (line 94))
+#14 680.6   Downloading tokenizers-0.22.2-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (7.3 kB)
+#14 683.6 Collecting tomli==2.4.1 (from -r requirements-lock.txt (line 95))
+#14 683.7   Downloading tomli-2.4.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (10 kB)
+#14 694.9 Collecting torch==2.5.1 (from -r requirements-lock.txt (line 96))
+#14 696.0   Downloading torch-2.5.1%2Bcpu-cp312-cp312-linux_x86_64.whl (174.6 MB)
+#14 798.6      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 174.6/174.6 MB 1.7 MB/s  0:01:42
+#14 802.7 Collecting tqdm==4.69.0 (from -r requirements-lock.txt (line 97))
+#14 802.9   Downloading tqdm-4.69.0-py3-none-any.whl.metadata (57 kB)
+#14 812.4 Collecting transformers==4.57.6 (from -r requirements-lock.txt (line 98))
+#14 812.7   Downloading transformers-4.57.6-py3-none-any.whl.metadata (43 kB)
+#14 815.9 Collecting typing-inspection==0.4.2 (from -r requirements-lock.txt (line 99))
+#14 816.1   Downloading typing_inspection-0.4.2-py3-none-any.whl.metadata (2.6 kB)
+#14 817.6 Collecting typing_extensions==4.16.0 (from -r requirements-lock.txt (line 100))
+#14 817.7   Downloading typing_extensions-4.16.0-py3-none-any.whl.metadata (3.3 kB)
+#14 820.7 Collecting urllib3==2.7.0 (from -r requirements-lock.txt (line 101))
+#14 820.8   Downloading urllib3-2.7.0-py3-none-any.whl.metadata (6.9 kB)
+#14 827.2 Collecting uvicorn==0.39.0 (from -r requirements-lock.txt (line 102))
+#14 830.0   Downloading uvicorn-0.39.0-py3-none-any.whl.metadata (6.8 kB)
+#14 853.1 Collecting websockets==16.1.1 (from -r requirements-lock.txt (line 103))
+#14 853.3   Downloading websockets-16.1.1-cp312-cp312-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl.metadata (6.8 kB)
+#14 872.7 Collecting setuptools (from torch==2.5.1->-r requirements-lock.txt (line 96))
+#14 872.9   Downloading setuptools-83.0.0-py3-none-any.whl.metadata (6.6 kB)
+#14 873.1 INFO: pip is looking at multiple versions of torch to determine which version is compatible with other requirements. This could take a while.
+#14 873.1 Collecting torch==2.5.1 (from -r requirements-lock.txt (line 96))
+#14 873.3   Downloading torch-2.5.1-cp312-cp312-manylinux1_x86_64.whl.metadata (28 kB)
+#14 875.9 Collecting nvidia-cuda-nvrtc-cu12==12.4.127 (from torch==2.5.1->-r requirements-lock.txt (line 96))
+#14 876.1   Downloading nvidia_cuda_nvrtc_cu12-12.4.127-py3-none-manylinux2014_x86_64.whl.metadata (1.5 kB)
+#14 877.4 Collecting nvidia-cuda-runtime-cu12==12.4.127 (from torch==2.5.1->-r requirements-lock.txt (line 96))
+#14 877.6   Downloading nvidia_cuda_runtime_cu12-12.4.127-py3-none-manylinux2014_x86_64.whl.metadata (1.5 kB)
+#14 878.8 Collecting nvidia-cuda-cupti-cu12==12.4.127 (from torch==2.5.1->-r requirements-lock.txt (line 96))
+#14 879.0   Downloading nvidia_cuda_cupti_cu12-12.4.127-py3-none-manylinux2014_x86_64.whl.metadata (1.6 kB)
+#14 882.6 Collecting nvidia-cudnn-cu12==9.1.0.70 (from torch==2.5.1->-r requirements-lock.txt (line 96))
+#14 882.8   Downloading nvidia_cudnn_cu12-9.1.0.70-py3-none-manylinux2014_x86_64.whl.metadata (1.6 kB)
+#14 884.8 Collecting nvidia-cublas-cu12==12.4.5.8 (from torch==2.5.1->-r requirements-lock.txt (line 96))
+#14 884.9   Downloading nvidia_cublas_cu12-12.4.5.8-py3-none-manylinux2014_x86_64.whl.metadata (1.5 kB)
+#14 886.7 Collecting nvidia-cufft-cu12==11.2.1.3 (from torch==2.5.1->-r requirements-lock.txt (line 96))
+#14 887.0   Downloading nvidia_cufft_cu12-11.2.1.3-py3-none-manylinux2014_x86_64.whl.metadata (1.5 kB)
+#14 888.2 Collecting nvidia-curand-cu12==10.3.5.147 (from torch==2.5.1->-r requirements-lock.txt (line 96))
+#14 888.4   Downloading nvidia_curand_cu12-10.3.5.147-py3-none-manylinux2014_x86_64.whl.metadata (1.5 kB)
+#14 889.6 Collecting nvidia-cusolver-cu12==11.6.1.9 (from torch==2.5.1->-r requirements-lock.txt (line 96))
+#14 889.7   Downloading nvidia_cusolver_cu12-11.6.1.9-py3-none-manylinux2014_x86_64.whl.metadata (1.6 kB)
+#14 892.0 Collecting nvidia-cusparse-cu12==12.3.1.170 (from torch==2.5.1->-r requirements-lock.txt (line 96))
+#14 892.2   Downloading nvidia_cusparse_cu12-12.3.1.170-py3-none-manylinux2014_x86_64.whl.metadata (1.6 kB)
+#14 894.4 Collecting nvidia-nccl-cu12==2.21.5 (from torch==2.5.1->-r requirements-lock.txt (line 96))
+#14 894.4   Downloading nvidia_nccl_cu12-2.21.5-py3-none-manylinux2014_x86_64.whl (188.7 MB)
+#14 1004.4      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 188.7/188.7 MB 1.7 MB/s  0:01:49
+#14 1006.4 Collecting nvidia-nvtx-cu12==12.4.127 (from torch==2.5.1->-r requirements-lock.txt (line 96))
+#14 1006.6   Downloading nvidia_nvtx_cu12-12.4.127-py3-none-manylinux2014_x86_64.whl.metadata (1.7 kB)
+#14 1008.0 Collecting nvidia-nvjitlink-cu12==12.4.127 (from torch==2.5.1->-r requirements-lock.txt (line 96))
+#14 1008.7   Downloading nvidia_nvjitlink_cu12-12.4.127-py3-none-manylinux2014_x86_64.whl.metadata (1.5 kB)
+#14 1010.4 Collecting triton==3.1.0 (from torch==2.5.1->-r requirements-lock.txt (line 96))
+#14 1010.5   Downloading triton-3.1.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (209.6 MB)
+#14 1133.9      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 209.6/209.6 MB 1.7 MB/s  0:02:03
+#14 1134.6 ERROR: Cannot install -r requirements-lock.txt (line 96) and sympy==1.14.0 because these package versions have conflicting dependencies.
+#14 1134.6 
+#14 1134.6 The conflict is caused by:
+#14 1134.6     The user requested sympy==1.14.0
+#14 1134.6     torch 2.5.1+cpu depends on sympy==1.13.1; python_version >= "3.9"
+#14 1134.6     torch 2.5.1 depends on sympy==1.13.1; python_version >= "3.9"
+#14 1134.6 
+#14 1134.6 Additionally, some packages in these conflicts have no matching distributions available for your environment:
+#14 1134.6     sympy
+#14 1134.6 
+#14 1134.6 To fix this you could try to:
+#14 1134.6 1. loosen the range of package versions you've specified
+#14 1134.6 2. remove package versions to allow pip to attempt to solve the dependency conflict
+#14 1134.6 
+#14 1134.6 ERROR: ResolutionImpossible: for help visit https://pip.pypa.io/en/latest/topics/dependency-resolution/#dealing-with-dependency-conflicts
+#14 ERROR: process "/bin/sh -c pip install --upgrade pip &&     pip install         --extra-index-url https://download.pytorch.org/whl/cpu         -r requirements-lock.txt" did not complete successfully: exit code: 1
+------
+ > [api builder 5/6] RUN pip install --upgrade pip &&     pip install         --extra-index-url https://download.pytorch.org/whl/cpu         -r requirements-lock.txt:
+1134.6     torch 2.5.1 depends on sympy==1.13.1; python_version >= "3.9"
+1134.6 
+1134.6 Additionally, some packages in these conflicts have no matching distributions available for your environment:
+1134.6     sympy
+1134.6 
+1134.6 To fix this you could try to:
+1134.6 1. loosen the range of package versions you've specified
+1134.6 2. remove package versions to allow pip to attempt to solve the dependency conflict
+1134.6 
+1134.6 ERROR: ResolutionImpossible: for help visit https://pip.pypa.io/en/latest/topics/dependency-resolution/#dealing-with-dependency-conflicts
+------

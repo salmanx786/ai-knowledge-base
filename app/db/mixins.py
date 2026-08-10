@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import BigInteger, DateTime, Identity, func
+from sqlalchemy import BigInteger, Integer, DateTime, Identity, func
 from sqlalchemy.orm import Mapped, mapped_column
 
 
@@ -13,7 +13,7 @@ class IdMixin:
     """
 
     id: Mapped[int] = mapped_column(
-        BigInteger,
+        BigInteger().with_variant(Integer, "sqlite"),
         Identity(always=False),
         primary_key=True,
     )

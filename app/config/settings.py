@@ -30,6 +30,10 @@ class Settings(BaseSettings):
     gemini_api_key: str | None = None
     gemini_model: str = "gemini-2.5-flash"
 
+    # Maximum allowed size for uploaded files in megabytes.
+    max_upload_size_mb: int = 10
+
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",

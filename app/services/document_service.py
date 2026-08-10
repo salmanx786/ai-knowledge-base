@@ -16,9 +16,13 @@ a transaction is already open -- so writes commit explicitly and roll back on
 failure.
 """
 
+import logging
 import uuid
 from collections.abc import Sequence
 from pathlib import Path
+
+logger = logging.getLogger(__name__)
+
 
 from fastapi import UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -49,9 +53,9 @@ class DocumentService:
         Order matters: the file is written to disk, its text is extracted, then
         the metadata row (including the text) and its text chunks -- each with
         its embedding -- are committed together in one transaction. If
-        extraction fails the saved file is intentionally left in place and
+        extraction fails the saved file is cleaned up and
         ``TextExtractionError`` propagates -- no rows are written, nothing is
-        deleted. Ownership comes from the authenticated caller, never the
+        leaked on disk. Ownership comes from the authenticated caller, never the
         request.
         """
         # Per-user directory keeps one user's files apart from another's.
@@ -64,42 +68,57 @@ class DocumentService:
         # upload root + owner_id + storage_filename, never stored or exposed.
         storage_filename = f"{uuid.uuid4().hex}.pdf"
         stored_path = user_dir / storage_filename
-        stored_path.write_bytes(await upload.read())
 
-        # Extract before the row is written. On failure this raises
-        # TextExtractionError (mapped to 500 upstream); the file above is left
-        # on disk by design and no partial row is created.
-        extracted_text = extract_pdf_text(stored_path)
+        try:
+            stored_path.write_bytes(await upload.read())
 
-        document = await self._documents.create(
-            owner_id=owner_id,
-            filename=upload.filename or storage_filename,
-            storage_filename=storage_filename,
-            extracted_text=extracted_text,
-        )
+            # Extract before the row is written. On failure this raises
+            # TextExtractionError; the file is unlinked in the except block.
+            extracted_text = extract_pdf_text(stored_path)
 
-        # Chunk the extracted text, embed each chunk, and persist the chunks
-        # (text + vector) in the same transaction as the document. chunk_text
-        # returns [] for empty or whitespace-only text, so an empty PDF produces
-        # no chunk rows and therefore no embeddings at all. document.id is
-        # available here because create() flushed. Embedding is synchronous and
-        # one chunk at a time by design -- batching and async are out of scope.
-        contents = chunk_text(extracted_text)
-        if contents:
-            embeddings = [self._embeddings.embed(content) for content in contents]
-            await self._chunks.create_for_document(
-                document_id=document.id,
-                contents=contents,
-                embeddings=embeddings,
+            document = await self._documents.create(
+                owner_id=owner_id,
+                filename=upload.filename or storage_filename,
+                storage_filename=storage_filename,
+                extracted_text=extracted_text,
             )
 
-        await self._session.commit()
-        await self._session.refresh(document)
-        return document
+            # Chunk the extracted text, embed each chunk, and persist the chunks
+            # (text + vector) in the same transaction as the document. chunk_text
+            # returns [] for empty or whitespace-only text, so an empty PDF produces
+            # no chunk rows and therefore no embeddings at all. document.id is
+            # available here because create() flushed. Embedding is synchronous and
+            # one chunk at a time by design -- batching and async are out of scope.
+            contents = chunk_text(extracted_text)
+            if contents:
+                embeddings = [self._embeddings.embed(content) for content in contents]
+                await self._chunks.create_for_document(
+                    document_id=document.id,
+                    contents=contents,
+                    embeddings=embeddings,
+                )
 
-    async def list_documents(self, *, owner_id: int) -> Sequence[Document]:
-        """Return every document owned by ``owner_id`` (read-only)."""
-        return await self._documents.list_for_user(owner_id=owner_id)
+            await self._session.commit()
+            await self._session.refresh(document)
+            return document
+        except Exception as exc:
+            # Clean up the file on disk if it was written
+            if stored_path.exists():
+                try:
+                    stored_path.unlink()
+                except Exception as cleanup_exc:
+                    logger.error(f"Failed to delete orphaned file {stored_path} during cleanup: {cleanup_exc}")
+            raise exc
+
+
+    async def list_documents(
+        self, *, owner_id: int, limit: int = 10, offset: int = 0
+    ) -> Sequence[Document]:
+        """Return every document owned by ``owner_id`` (read-only, paginated)."""
+        return await self._documents.list_for_user(
+            owner_id=owner_id, limit=limit, offset=offset
+        )
+
 
     async def get_document(
         self, *, document_id: int, owner_id: int
@@ -129,5 +148,18 @@ class DocumentService:
         )
         if document is None:
             raise DocumentNotFoundError(document_id)
+
+        # Keep track of file path before deleting DB record
+        storage_filename = document.storage_filename
+        stored_path = Path(settings.upload_dir) / str(owner_id) / storage_filename
+
         await self._documents.delete(document)
         await self._session.commit()
+
+        # Delete physical file from disk AFTER successful commit
+        if stored_path.exists():
+            try:
+                stored_path.unlink()
+            except Exception as exc:
+                logger.warning(f"Failed to delete physical file {stored_path} on document deletion: {exc}")
+

@@ -4,7 +4,9 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     app_name: str = "AI Knowledge Base"
     app_version: str = "0.1.0"
-    debug: bool = True
+    # Off by default so production never echoes SQL. ``engine`` uses this for
+    # ``echo=``; set ``DEBUG=true`` in a dev ``.env`` to see statements.
+    debug: bool = False
 
     database_url: str
 

@@ -31,9 +31,11 @@ class DocumentNotFoundError(Exception):
 class TextExtractionError(Exception):
     """Raised when a saved PDF cannot be opened or read for text extraction.
 
-    Signals a malformed, truncated, or otherwise unreadable PDF. The API maps
-    this to a 500: the file was accepted and stored, but the server could not
-    process it. The uploaded file is left in place, not deleted.
+    Signals a malformed, truncated, or otherwise unreadable PDF -- a bad
+    request, not a server fault, so the API maps this to a 400. The upload
+    service treats it like any other failure in the write path: the file it
+    saved is unlinked before the error propagates, so a rejected upload leaves
+    no orphaned file on disk and no row in the database.
     """
 
 

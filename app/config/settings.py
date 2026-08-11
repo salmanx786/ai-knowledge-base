@@ -4,7 +4,9 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     app_name: str = "AI Knowledge Base"
     app_version: str = "0.1.0"
-    debug: bool = True
+    # Off by default so production never echoes SQL. ``engine`` uses this for
+    # ``echo=``; set ``DEBUG=true`` in a dev ``.env`` to see statements.
+    debug: bool = False
 
     database_url: str
 
@@ -29,6 +31,10 @@ class Settings(BaseSettings):
     # startup. The model is configurable so it can be swapped without a code change.
     gemini_api_key: str | None = None
     gemini_model: str = "gemini-2.5-flash"
+
+    # Maximum allowed size for uploaded files in megabytes.
+    max_upload_size_mb: int = 10
+
 
     model_config = SettingsConfigDict(
         env_file=".env",

@@ -1,0 +1,41 @@
+# Keep the build context small, the image clean, and secrets out of it.
+# Everything here is excluded from the Docker build context, so it can neither
+# bloat layers nor be COPY'd in by accident.
+
+# --- Secrets: never build these into an image ---
+.env
+.env.*
+!.env.example
+
+# --- Version control & CI ---
+.git
+.gitignore
+.github
+
+# --- Python caches / local virtualenv (rebuilt inside the image) ---
+.venv
+venv
+__pycache__
+**/__pycache__
+*.pyc
+*.pyo
+.pytest_cache
+.mypy_cache
+.ruff_cache
+
+# --- Local data that must not ship in the image ---
+uploads/          # runtime user data — belongs in a volume, not the image
+*.db              # local SQLite databases (e.g. ai_knowledge_base.db)
+
+# --- Editor / OS / docs cruft ---
+.vscode
+.claude
+.DS_Store
+docs
+tests
+README.md
+
+# --- Docker artifacts themselves ---
+Dockerfile
+docker-compose.yml
+.dockerignore

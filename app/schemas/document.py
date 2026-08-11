@@ -21,3 +21,16 @@ class DocumentResponse(BaseModel):
     extracted_text: str | None
     created_at: datetime
     updated_at: datetime
+
+
+class DocumentSummaryResponse(BaseModel):
+    """Lightweight representation of an uploaded document, excluding extracted_text."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    owner_id: int
+    filename: str
+    created_at: datetime
+    updated_at: datetime
+

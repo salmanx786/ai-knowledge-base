@@ -1,0 +1,103 @@
+# ============================================================================
+# requirements-lock.txt — EXACT reproduction of the working dev environment.
+#
+# Generated with:  .venv/bin/python -m pip freeze
+#
+# Why this file exists (in addition to requirements.txt):
+#   requirements.txt is the curated, human-readable spec. It intentionally
+#   leaves the ML stack (torch, numpy, transformers, tokenizers, ...) UNPINNED
+#   so each platform can resolve appropriate wheels. That flexibility is great
+#   for local dev but bad for reproducibility: `pip install -r requirements.txt`
+#   on Linux resolves those floating deps to whatever is newest today, which is
+#   NOT what runs on the dev machine.
+#
+#   This lock pins every transitive dependency to the exact version the dev
+#   environment runs, so:   development == Docker == production.
+#
+# How to upgrade (deliberately, everywhere at once):
+#   1. Upgrade packages in your dev venv and verify the app still works.
+#   2. Regenerate this file:  .venv/bin/python -m pip freeze > requirements-lock.txt
+#   3. Rebuild the image. Dev and Docker move together, never apart.
+#
+# NOTE on torch: the version below (2.2.2) is pinned to match dev. In the
+# Dockerfile it is installed from PyTorch's CPU wheel index so the Linux image
+# gets the CPU-only build (the equivalent of the CPU wheel dev uses on macOS),
+# not the multi-GB CUDA build the default PyPI index would provide. The version
+# is identical; only the compiled backend differs, which a CPU host requires.
+# ============================================================================
+aiosqlite==0.22.1
+alembic==1.16.5
+annotated-doc==0.0.4
+annotated-types==0.7.0
+anyio==4.12.1
+argon2-cffi==25.1.0
+argon2-cffi-bindings==25.1.0
+async-timeout==5.0.1
+asyncpg==0.30.0
+certifi==2026.6.17
+cffi==2.1.0
+charset-normalizer==3.4.9
+click==8.1.8
+cryptography==49.0.0
+distro==1.9.0
+dnspython==2.8.0
+email-validator==2.3.0
+exceptiongroup==1.3.1
+fastapi==0.128.8
+filelock==3.32.0
+fsspec==2026.6.0
+google-auth==2.56.2
+google-genai==2.14.0
+greenlet==3.2.5
+h11==0.16.0
+hf-xet==1.5.2
+httpcore==1.0.9
+httpx==0.28.1
+huggingface_hub==0.36.2
+idna==3.18
+Jinja2==3.1.6
+jiter==0.16.0
+joblib==1.5.3
+Mako==1.3.12
+MarkupSafe==3.0.3
+mpmath==1.3.0
+narwhals==2.24.0
+networkx==3.6.1
+numpy==2.5.1
+openai==1.66.3
+packaging==26.2
+pillow==12.3.0
+pwdlib==0.3.0
+pyasn1==0.6.4
+pyasn1_modules==0.4.2
+pycparser==3.0
+pydantic==2.13.4
+pydantic-settings==2.11.0
+pydantic_core==2.46.4
+PyJWT==2.13.0
+pymupdf==1.28.0
+python-dotenv==1.2.1
+python-multipart==0.0.20
+PyYAML==6.0.3
+regex==2026.7.19
+requests==2.34.2
+safetensors==0.8.0
+scikit-learn==1.9.0
+scipy==1.18.0
+sentence-transformers==3.4.1
+sniffio==1.3.1
+SQLAlchemy==2.0.51
+starlette==0.49.3
+sympy==1.13.1
+tenacity==9.1.4
+threadpoolctl==3.6.0
+tokenizers==0.22.2
+tomli==2.4.1
+torch==2.5.1
+tqdm==4.69.0
+transformers==4.57.6
+typing-inspection==0.4.2
+typing_extensions==4.16.0
+urllib3==2.7.0
+uvicorn==0.39.0
+websockets==16.1.1

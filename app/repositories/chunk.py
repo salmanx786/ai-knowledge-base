@@ -6,7 +6,7 @@ transactions -- the service owns the unit of work.
 
 Chunks are always accessed as a group belonging to one document, so there is no
 single-row getter here: ``create_for_document`` writes an ordered batch and
-``list_for_document`` reads it back in ``chunk_index`` order.
+``list_for_user`` reads back every embedded chunk a user owns for retrieval.
 """
 
 from collections.abc import Sequence
@@ -53,17 +53,6 @@ class DocumentChunkRepository:
         self._session.add_all(chunks)
         await self._session.flush()
         return chunks
-
-    async def list_for_document(
-        self, *, document_id: int
-    ) -> Sequence[DocumentChunk]:
-        """Return a document's chunks ordered by ``chunk_index`` (read-only)."""
-        result = await self._session.execute(
-            select(DocumentChunk)
-            .where(DocumentChunk.document_id == document_id)
-            .order_by(DocumentChunk.chunk_index)
-        )
-        return result.scalars().all()
 
     async def list_for_user(self, *, owner_id: int) -> Sequence[DocumentChunk]:
         """Return all chunks belonging to documents owned by ``owner_id``.

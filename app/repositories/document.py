@@ -44,14 +44,19 @@ class DocumentRepository:
         await self._session.flush()
         return document
 
-    async def list_for_user(self, *, owner_id: int) -> Sequence[Document]:
-        """Return all documents owned by this user, newest first."""
+    async def list_for_user(
+        self, *, owner_id: int, limit: int = 10, offset: int = 0
+    ) -> Sequence[Document]:
+        """Return all documents owned by this user, newest first (paginated)."""
         result = await self._session.execute(
             select(Document)
             .where(Document.owner_id == owner_id)
             .order_by(Document.created_at.desc())
+            .limit(limit)
+            .offset(offset)
         )
         return result.scalars().all()
+
 
     async def get_for_user(
         self, *, document_id: int, owner_id: int

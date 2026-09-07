@@ -1,17 +1,8 @@
-"""Persistence access for the DocumentChunk entity.
-
-Same contract as the other repositories: methods translate intent into
-SQLAlchemy queries and operate on the injected session, but never open or commit
-transactions -- the service owns the unit of work.
-
-Chunks are always accessed as a group belonging to one document, so there is no
-single-row getter here: ``create_for_document`` writes an ordered batch and
-``list_for_user`` reads back every embedded chunk a user owns for retrieval.
-"""
+"""Persistence access for the DocumentChunk entity."""
 
 from collections.abc import Sequence
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.chunk import DocumentChunk
@@ -29,16 +20,7 @@ class DocumentChunkRepository:
         contents: Sequence[str],
         embeddings: Sequence[list[float]],
     ) -> list[DocumentChunk]:
-        """Add ``contents`` as chunks 0..n-1 for a document, in order. No commit.
-
-        ``chunk_index`` is assigned from each item's position in ``contents``, so
-        the caller's ordering is the persisted ordering. ``embeddings`` is the
-        parallel vector for each content (same length, same order); each chunk
-        is created carrying its embedding, so text and vector land in one write.
-        Flushes (not commits) so generated ids are populated and any constraint
-        violation surfaces here, while the write stays part of the service's
-        transaction.
-        """
+        """Add ordered chunks and their embeddings without committing."""
         chunks = [
             DocumentChunk(
                 document_id=document_id,
@@ -54,14 +36,12 @@ class DocumentChunkRepository:
         await self._session.flush()
         return chunks
 
-    async def list_for_user(self, *, owner_id: int) -> Sequence[DocumentChunk]:
-        """Return all chunks belonging to documents owned by ``owner_id``.
-
-        Joins through Document so ownership is enforced at the query level --
-        a chunk whose document belongs to a different user is never returned.
-        Only chunks with a non-null embedding are included; chunks from empty
-        PDFs (no text extracted) have no embedding and cannot be ranked.
-        """
+    async def list_for_user(
+        self,
+        *,
+        owner_id: int,
+    ) -> Sequence[DocumentChunk]:
+        """Return all embedded chunks belonging to the user."""
         result = await self._session.execute(
             select(DocumentChunk)
             .join(Document, DocumentChunk.document_id == Document.id)
@@ -70,4 +50,34 @@ class DocumentChunkRepository:
                 DocumentChunk.embedding.is_not(None),
             )
         )
+        return result.scalars().all()
+
+    async def search_full_text(
+        self,
+        *,
+        owner_id: int,
+        query: str,
+        limit: int,
+    ) -> Sequence[DocumentChunk]:
+        """Return the strongest PostgreSQL full-text matches for the user."""
+
+        ts_query = func.websearch_to_tsquery("english", query)
+
+        result = await self._session.execute(
+            select(DocumentChunk)
+            .join(Document, DocumentChunk.document_id == Document.id)
+            .where(
+                Document.owner_id == owner_id,
+                DocumentChunk.embedding.is_not(None),
+                DocumentChunk.search_vector.op("@@")(ts_query),
+            )
+            .order_by(
+                func.ts_rank_cd(
+                    DocumentChunk.search_vector,
+                    ts_query,
+                ).desc()
+            )
+            .limit(limit)
+        )
+
         return result.scalars().all()

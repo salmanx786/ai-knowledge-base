@@ -50,6 +50,7 @@ async def chat(
             owner_id=current_user.id,
             question=body.question,
             limit=body.limit,
+            conversation_id=body.conversation_id,
         )
     except NoRelevantDocumentsError:
         raise HTTPException(

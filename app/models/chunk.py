@@ -7,7 +7,9 @@ from sqlalchemy import (
     Integer,
     Text,
     UniqueConstraint,
+    Computed,
 )
+from sqlalchemy.dialects.postgresql import TSVECTOR
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import ORMBase
@@ -67,6 +69,15 @@ class DocumentChunk(ORMBase):
         # deliberately out of scope. All vectors from one model share a fixed
         # length, but that invariant lives in the embedding module, not here.
         JSON,
+        nullable=True,
+    )
+
+    search_vector: Mapped[object | None] = mapped_column(
+        TSVECTOR,
+        Computed(
+            "to_tsvector('english', coalesce(content, ''))",
+            persisted=True,
+        ),
         nullable=True,
     )
 

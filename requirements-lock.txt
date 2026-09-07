@@ -19,7 +19,7 @@
 #   2. Regenerate this file:  .venv/bin/python -m pip freeze > requirements-lock.txt
 #   3. Rebuild the image. Dev and Docker move together, never apart.
 #
-# NOTE on torch: the version below (2.2.2) is pinned to match dev. In the
+# NOTE on torch: the version below (2.5.1) is pinned to match dev. In the
 # Dockerfile it is installed from PyTorch's CPU wheel index so the Linux image
 # gets the CPU-only build (the equivalent of the CPU wheel dev uses on macOS),
 # not the multi-GB CUDA build the default PyPI index would provide. The version

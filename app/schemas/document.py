@@ -19,6 +19,8 @@ class DocumentResponse(BaseModel):
     owner_id: int
     filename: str
     extracted_text: str | None
+    status: str
+    error_message: str | None
     created_at: datetime
     updated_at: datetime
 
@@ -31,6 +33,8 @@ class DocumentSummaryResponse(BaseModel):
     id: int
     owner_id: int
     filename: str
+    status: str
+    error_message: str | None
     created_at: datetime
     updated_at: datetime
 

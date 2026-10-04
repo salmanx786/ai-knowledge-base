@@ -23,14 +23,16 @@ class Settings(BaseSettings):
     # ``<upload_dir>/<owner_id>/``; the directory is created on first upload.
     upload_dir: str = "uploads"
 
-    # Google Gemini settings for RAG chat. ``gemini_api_key`` is intentionally
-    # optional (defaults to None): the app must boot without it so the rest of
-    # the API stays available. The key is only required at the moment a chat is
-    # generated -- ``llm.generate_answer`` raises a clear error if it is unset --
-    # so a missing key surfaces as a server error on /api/v1/chat, not a failed
-    # startup. The model is configurable so it can be swapped without a code change.
+    # Google Gemini settings for RAG chat and embeddings
     gemini_api_key: str | None = None
     gemini_model: str = "gemini-2.5-flash"
+
+    # S3 Storage settings for uploaded documents
+    aws_access_key_id: str | None = None
+    aws_secret_access_key: str | None = None
+    aws_region: str = "us-east-1"
+    aws_endpoint_url: str | None = None
+    aws_bucket_name: str = "ai-knowledge-base-uploads"
 
     # Maximum allowed size for uploaded files in megabytes.
     max_upload_size_mb: int = 10

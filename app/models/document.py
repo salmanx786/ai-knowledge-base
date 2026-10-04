@@ -49,5 +49,14 @@ class Document(ORMBase):
         Text,
         nullable=True,
     )
+    status: Mapped[str] = mapped_column(
+        String(50),
+        nullable=False,
+        default="pending",
+    )
+    error_message: Mapped[str | None] = mapped_column(
+        Text,
+        nullable=True,
+    )
 
     owner: Mapped["User"] = relationship()

@@ -67,47 +67,31 @@ class DocumentService:
         # Only this basename is persisted; the full path is derived from the
         # upload root + owner_id + storage_filename, never stored or exposed.
         storage_filename = f"{uuid.uuid4().hex}.pdf"
-        stored_path = user_dir / storage_filename
+        key = f"{owner_id}/{storage_filename}"
 
         try:
-            stored_path.write_bytes(await upload.read())
-
-            # Extract before the row is written. On failure this raises
-            # TextExtractionError; the file is unlinked in the except block.
-            extracted_text = extract_pdf_text(stored_path)
+            from app.services.storage import StorageService
+            storage = StorageService()
+            # Since upload.file is a file-like object, upload it to S3
+            storage.upload_fileobj(upload.file, key)
 
             document = await self._documents.create(
                 owner_id=owner_id,
                 filename=upload.filename or storage_filename,
                 storage_filename=storage_filename,
-                extracted_text=extracted_text,
+                extracted_text=None,
             )
-
-            # Chunk the extracted text, embed each chunk, and persist the chunks
-            # (text + vector) in the same transaction as the document. chunk_text
-            # returns [] for empty or whitespace-only text, so an empty PDF produces
-            # no chunk rows and therefore no embeddings at all. document.id is
-            # available here because create() flushed. Embedding is synchronous and
-            # one chunk at a time by design -- batching and async are out of scope.
-            contents = chunk_text(extracted_text)
-            if contents:
-                embeddings = [self._embeddings.embed(content) for content in contents]
-                await self._chunks.create_for_document(
-                    document_id=document.id,
-                    contents=contents,
-                    embeddings=embeddings,
-                )
-
+            document.status = "pending"
             await self._session.commit()
             await self._session.refresh(document)
+            
+            # Enqueue the background task via procrastinate
+            from app.worker import process_document_task
+            await process_document_task.defer_async(document_id=document.id)
+            
             return document
         except Exception as exc:
-            # Clean up the file on disk if it was written
-            if stored_path.exists():
-                try:
-                    stored_path.unlink()
-                except Exception as cleanup_exc:
-                    logger.error(f"Failed to delete orphaned file {stored_path} during cleanup: {cleanup_exc}")
+            logger.error(f"Failed to upload document: {exc}", exc_info=True)
             raise exc
 
 
@@ -156,10 +140,12 @@ class DocumentService:
         await self._documents.delete(document)
         await self._session.commit()
 
-        # Delete physical file from disk AFTER successful commit
-        if stored_path.exists():
-            try:
-                stored_path.unlink()
-            except Exception as exc:
-                logger.warning(f"Failed to delete physical file {stored_path} on document deletion: {exc}")
+        # Delete physical file from S3 AFTER successful commit
+        key = f"{owner_id}/{storage_filename}"
+        try:
+            from app.services.storage import StorageService
+            storage = StorageService()
+            storage.delete_object(key)
+        except Exception as exc:
+            logger.warning(f"Failed to delete physical file {key} from S3 on document deletion: {exc}")
 

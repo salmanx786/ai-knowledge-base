@@ -1,43 +1,25 @@
-"""Text chunking, isolated behind one pure function.
+"""Text chunking using LangChain.
 
-This module is the single home of the rule for how a document's text is split
-into chunks. Keeping it separate from persistence and PDF handling means the
-splitting logic is a plain ``str -> list[str]`` with no database, no I/O, and
-nothing to mock -- trivially testable and swappable without touching callers.
-
-Scope is deliberately narrow per the current requirement: split on whitespace
-into runs of approximately ``CHUNK_SIZE_WORDS`` words, preserving order. No
-embeddings, no overlap, no sentence/semantic awareness, no tokenizer.
+Upgraded to use RecursiveCharacterTextSplitter with overlap
+to preserve semantic meaning across chunk boundaries.
 """
 
-# Approximate target size of each chunk, in whitespace-delimited words. Chunks
-# are cut on word boundaries, so every chunk except the last has exactly this
-# many words; the last holds the remainder.
-#
-# Sized to the embedding model's context window, not chosen arbitrarily.
-# ``all-MiniLM-L6-v2`` (see ``embeddings.py``) truncates input at 256 tokens,
-# and English averages ~1.3 tokens/word, so ~200 words is the most text that can
-# be embedded without silently dropping the tail. A larger chunk would store and
-# display fine but embed only its first ~200 words, so retrieval would rank on a
-# vector that ignores most of the chunk. Non-overlapping is a deliberate
-# simplification (see the module docstring).
-CHUNK_SIZE_WORDS = 200
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 
+# We target around 500 tokens. Using chunk_size ~2000 characters is a safe approximation.
+# Overlap preserves context between boundaries.
+CHUNK_SIZE_CHARS = 2000
+CHUNK_OVERLAP_CHARS = 200
 
-def chunk_text(text: str, *, chunk_size_words: int = CHUNK_SIZE_WORDS) -> list[str]:
-    """Split ``text`` into ordered chunks of ~``chunk_size_words`` words.
+def chunk_text(text: str, *, chunk_size: int = CHUNK_SIZE_CHARS, overlap: int = CHUNK_OVERLAP_CHARS) -> list[str]:
+    """Split ``text`` into ordered chunks using LangChain text splitters."""
+    if not text.strip():
+        return []
 
-    Words are separated on any whitespace (``str.split``), which also collapses
-    runs of whitespace and drops leading/trailing blanks. Each chunk's words are
-    rejoined with a single space, so the output normalizes internal whitespace
-    but preserves word order and the sequence of chunks.
+    text_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=chunk_size,
+        chunk_overlap=overlap,
+        separators=["\n\n", "\n", ".", " ", ""]
+    )
+    return text_splitter.split_text(text)
 
-    Returns an empty list for empty or whitespace-only input -- there are no
-    words to place, so there are no chunks (never a single empty chunk). By
-    construction no returned chunk is ever empty.
-    """
-    words = text.split()
-    return [
-        " ".join(words[start : start + chunk_size_words])
-        for start in range(0, len(words), chunk_size_words)
-    ]

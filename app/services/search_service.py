@@ -4,7 +4,7 @@ from app.repositories.chunk import DocumentChunkRepository
 from app.schemas.search import SearchResultResponse
 from app.services.embeddings import EmbeddingService
 from app.services.reranking import RerankingService
-from app.services.similarity import cosine_similarity
+
 
 
 class SearchService:
@@ -25,9 +25,19 @@ class SearchService:
         candidate_limit = max(limit * 4, 20)
 
         # 1. Dense candidate generation.
-        all_chunks = await self._chunks.list_for_user(
+        query_vector = self._embeddings.embed(query)
+
+        semantic_candidates_raw = await self._chunks.search_semantic(
             owner_id=owner_id,
+            query_vector=query_vector,
+            limit=candidate_limit,
         )
+        
+        # Invert cosine distance to cosine similarity
+        semantic_candidates = [
+            (1.0 - distance, chunk) 
+            for chunk, distance in semantic_candidates_raw
+        ]
 
         # 2. Lexical candidate generation.
         lexical_chunks = await self._chunks.search_full_text(
@@ -36,26 +46,8 @@ class SearchService:
             limit=candidate_limit,
         )
 
-        if not all_chunks and not lexical_chunks:
+        if not semantic_candidates and not lexical_chunks:
             return []
-
-        query_vector = self._embeddings.embed(query)
-
-        # Score all dense candidates and keep only the top candidate_limit.
-        semantic_candidates = sorted(
-            (
-                (
-                    cosine_similarity(
-                        query_vector,
-                        chunk.embedding,  # type: ignore[arg-type]
-                    ),
-                    chunk,
-                )
-                for chunk in all_chunks
-            ),
-            key=lambda item: item[0],
-            reverse=True,
-        )[:candidate_limit]
 
         # 3. Merge dense + lexical candidates by stable chunk identity.
         candidates_by_key = {

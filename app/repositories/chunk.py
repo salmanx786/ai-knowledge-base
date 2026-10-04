@@ -36,21 +36,29 @@ class DocumentChunkRepository:
         await self._session.flush()
         return chunks
 
-    async def list_for_user(
+    async def search_semantic(
         self,
         *,
         owner_id: int,
-    ) -> Sequence[DocumentChunk]:
-        """Return all embedded chunks belonging to the user."""
+        query_vector: list[float],
+        limit: int,
+    ) -> Sequence[tuple[DocumentChunk, float]]:
+        """Return the closest pgvector matches for the user."""
+        
         result = await self._session.execute(
-            select(DocumentChunk)
+            select(
+                DocumentChunk,
+                DocumentChunk.embedding.cosine_distance(query_vector).label("distance")
+            )
             .join(Document, DocumentChunk.document_id == Document.id)
             .where(
                 Document.owner_id == owner_id,
                 DocumentChunk.embedding.is_not(None),
             )
+            .order_by(DocumentChunk.embedding.cosine_distance(query_vector))
+            .limit(limit)
         )
-        return result.scalars().all()
+        return result.all()
 
     async def search_full_text(
         self,
